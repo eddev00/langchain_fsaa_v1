@@ -11,7 +11,7 @@ class TextIn(BaseModel):
 
 
 class PredictionOut(BaseModel):
-    response: str
+    response: dict
 
 
 @app.get("/")
@@ -22,4 +22,6 @@ def home():
 @app.post("/predict", response_model=PredictionOut)
 def predict(payload: TextIn):
     response = gen_answer(payload.text)
-    return {"response": response}
+    answer  = response["answer"]
+    return {"response": response,
+            "answer": answer}  

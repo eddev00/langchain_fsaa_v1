@@ -28,14 +28,18 @@ def make_chain():
     )
 
 
-def gen_answer(user_input):
+def gen_answer(user_input,chat_history_input=None):
     load_dotenv()
 
     chain = make_chain()
-    chat_history = []
+    
+    if chat_history_input:
+       chat_history= chat_history_input
+    else:
+       chat_history = []
 
     
-    print()
+    
     question = user_input
 
     # Generate answer
@@ -46,13 +50,12 @@ def gen_answer(user_input):
     source = response["source_documents"]
     chat_history.append(HumanMessage(content=question))
     chat_history.append(AIMessage(content=answer))
-
+     
     # Display answer
     #print("\n\nSources:\n")
     #for document in source:
     #    print(f"Page: {document.metadata['page_number']}")
     #    print(f"Text chunk: {document.page_content[:160]}...\n")
     #print(f"Answer: {answer}")
-    return answer
-
-
+    return response,chat_history
+   
