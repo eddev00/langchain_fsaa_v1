@@ -17,7 +17,7 @@ def make_chain():
     vector_store = Chroma(
         collection_name="CNPN-Licence-Fondamentale_Professionnelle",
         embedding_function=embedding,
-        persist_directory="src/data/chroma",
+        persist_directory="app/model/src/data/chroma",
     )
 
     return ConversationalRetrievalChain.from_llm(
@@ -28,28 +28,31 @@ def make_chain():
     )
 
 
-if __name__ == "__main__":
+def gen_answer(user_input):
     load_dotenv()
 
     chain = make_chain()
     chat_history = []
 
-    while True:
-        print()
-        question = input("Question: ")
+    
+    print()
+    question = user_input
 
-        # Generate answer
-        response = chain({"question": question, "chat_history": chat_history})
+    # Generate answer
+    response = chain({"question": question, "chat_history": chat_history})
 
-        # Retrieve answer
-        answer = response["answer"]
-        source = response["source_documents"]
-        chat_history.append(HumanMessage(content=question))
-        chat_history.append(AIMessage(content=answer))
+    # Retrieve answer
+    answer = response["answer"]
+    source = response["source_documents"]
+    chat_history.append(HumanMessage(content=question))
+    chat_history.append(AIMessage(content=answer))
 
-        # Display answer
-        print("\n\nSources:\n")
-        for document in source:
-            print(f"Page: {document.metadata['page_number']}")
-            print(f"Text chunk: {document.page_content[:160]}...\n")
-        print(f"Answer: {answer}")
+    # Display answer
+    #print("\n\nSources:\n")
+    #for document in source:
+    #    print(f"Page: {document.metadata['page_number']}")
+    #    print(f"Text chunk: {document.page_content[:160]}...\n")
+    #print(f"Answer: {answer}")
+    return answer
+
+
