@@ -47,15 +47,9 @@ def gen_answer(user_input,chat_history_input=None):
 
     # Retrieve answer
     answer = response["answer"]
-    source = response["source_documents"]
+    
     chat_history.append(HumanMessage(content=question))
     chat_history.append(AIMessage(content=answer))
-     
-    # Display answer
-    #print("\n\nSources:\n")
-    #for document in source:
-    #    print(f"Page: {document.metadata['page_number']}")
-    #    print(f"Text chunk: {document.page_content[:160]}...\n")
-    #print(f"Answer: {answer}")
-    return response,chat_history
+    
+    return answer,chat_history
    

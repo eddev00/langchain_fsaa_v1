@@ -9,6 +9,8 @@ app = FastAPI()
 class TextIn(BaseModel):
     text: str
 
+class ListIn(BaseModel):
+    list: list    
 
 class PredictionOut(BaseModel):
     response: dict
@@ -19,9 +21,10 @@ def home():
     return {"health_check": "OK"}
 
 
-@app.post("/predict", response_model=PredictionOut)
-def predict(payload: TextIn):
-    response = gen_answer(payload.text)
-    answer  = response["answer"]
-    return {"response": response,
-            "answer": answer}  
+@app.post("/predict")
+def predict(user_input: TextIn,chat_history:ListIn=None):
+    response = gen_answer(user_input.text,chat_history.list)
+    answer  = response[0]
+    chat_history = response[1]
+    return {"answer": answer,
+            "chat history": chat_history}  
