@@ -4,7 +4,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from langchain.schema import HumanMessage, AIMessage
 from dotenv import load_dotenv
-
+import time
 
 def make_chain():
     model = ChatOpenAI(
@@ -32,14 +32,20 @@ def gen_answer(user_input,chat_history_input=None):
     load_dotenv()
 
     chain = make_chain()
-    
+    chat_history = []
+
     if chat_history_input:
-       chat_history= chat_history_input
+       for chat in chat_history_input['chat history']:
+              if(list(chat_history_input['chat history']).index(chat)%2==0):
+               print(chat['content'])  
+               chat_history.append(HumanMessage(content=chat['content']))
+              else:
+               chat_history.append(AIMessage(content=chat['content']))
+           
     else:
        chat_history = []
 
-    
-    
+    print('okey',chat_history)
     question = user_input
 
     # Generate answer
@@ -50,6 +56,7 @@ def gen_answer(user_input,chat_history_input=None):
     
     chat_history.append(HumanMessage(content=question))
     chat_history.append(AIMessage(content=answer))
-    
     return answer,chat_history
    
+
+

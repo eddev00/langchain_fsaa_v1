@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from app.model.request_response import gen_answer
-
+from langchain.schema import HumanMessage, AIMessage
 
 app = FastAPI()
 
@@ -10,7 +10,7 @@ class TextIn(BaseModel):
     text: str
 
 class ListIn(BaseModel):
-    list: list    
+    list: dict    
 
 class PredictionOut(BaseModel):
     response: dict
@@ -24,7 +24,9 @@ def home():
 @app.post("/predict")
 def predict(user_input: TextIn,chat_history:ListIn=None):
     response = gen_answer(user_input.text,chat_history.list)
+    
     answer  = response[0]
     chat_history = response[1]
+   
     return {"answer": answer,
             "chat history": chat_history}  
