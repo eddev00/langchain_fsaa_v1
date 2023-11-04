@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from app.model.request_response import gen_answer
-from langchain.schema import HumanMessage, AIMessage
+
 
 app = FastAPI()
 

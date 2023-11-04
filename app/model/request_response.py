@@ -2,14 +2,42 @@ from langchain.vectorstores.chroma import Chroma
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
-from langchain.schema import HumanMessage, AIMessage
+
+from langchain.schema import HumanMessage, AIMessage, SystemMessage
 from dotenv import load_dotenv
 import time
-
+from langchain.prompts import (
+    ChatPromptTemplate,
+    PromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
 def make_chain():
+    QA_PROMPT_DOCUMENT_CHAT = """You're name is Aziz you are a university assistant,
+    help answer student questions about the university, you can answer in the language the question is asked in. 
+    Use the following pieces of context to answer the question at the end.
+    If the question is not related to the context, politely respond that you 
+    are teached to only answer questions that are related to the context.
+    If you're asked about your name or idendity please answer with your name and your role.
+    If you don't know the answer, just say you don't know. DO NOT try to make up an answer.
+    Answer in the language you are asked in.
+    {context}
+
+    Question: {question}
+    Helpful Answer:"""
+
+    # Create a PromptTemplate with your custom template
+    custom_condense_question_prompt = PromptTemplate(
+        input_variables=["context", "question"],
+        template=QA_PROMPT_DOCUMENT_CHAT
+    )
     model = ChatOpenAI(
         model_name="gpt-3.5-turbo",
         temperature="0.4",
+        
+
+
         # verbose=True
     )
     embedding = OpenAIEmbeddings()
@@ -24,7 +52,9 @@ def make_chain():
         model,
         retriever=vector_store.as_retriever(),
         return_source_documents=True,
-        # verbose=True,
+        combine_docs_chain_kwargs={"prompt": custom_condense_question_prompt},
+        condense_question_prompt=custom_condense_question_prompt
+        # verbose=True, 
     )
 
 
@@ -60,3 +90,4 @@ def gen_answer(user_input,chat_history_input=None):
    
 
 
+print(gen_answer("goliya bdarija chnahiya license fondamentale")[0])
